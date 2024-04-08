@@ -1,0 +1,475 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Properties="clr-namespace:Ex_Req_Worklist.Properties" x:Class="Ex_Req_Worklist.ex_req_worklist"   
+             mc:Ignorable="d" Height="616.975" Width="1052" Foreground="Black" Background="#FFCBCBCB">
+    <UserControl.Resources>
+        <Style x:Key="MyFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Control}">
+                        <Grid Margin="3 2">
+                            <Rectangle x:Name="r1" StrokeThickness="1" Stroke="Black" StrokeDashArray="2 2"/>
+                            <Border x:Name="border" Width="{TemplateBinding ActualWidth}" Height="{TemplateBinding ActualHeight}"  CornerRadius="2" BorderThickness="1" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CustomButton" TargetType="{x:Type Button}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="FontFamily" Value="Ariel"/>
+            <Setter Property="FontSize" Value="13px"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource MyFocusVisual}" />
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFD9DEF9" Offset="0"/>
+                        <GradientStop Color="#FFDEDFE6" Offset="1"/>
+                        <GradientStop Color="#FFF2F4FF" Offset="0.494"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="#FF356885"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" BorderThickness="1" Padding="4,2" BorderBrush="DarkGray" CornerRadius="0" Background="{TemplateBinding Background}" Margin="-20,0,0,0">
+                            <Grid>
+                                <ContentPresenter HorizontalAlignment="Center"
+                           VerticalAlignment="Center" x:Name="content"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFD9DEF9" Offset="0"/>
+                                <GradientStop Color="#FFE2CA77" Offset="1"/>
+                                <GradientStop Color="#FFF7DBAD" Offset="0.494"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFD9DEF9" Offset="0"/>
+                                <GradientStop Color="#FFBB9C2F" Offset="1"/>
+                                <GradientStop Color="#FFDAB77E" Offset="0.494"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type CheckBox}" x:Key="myCheckboxStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image x:Name="checkboxImage" Source="{Binding checkBoxUnchecked}" Width="30"/>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="checkboxImage" Property="Source" Value="{Binding checkBoxChecked}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="checkboxImage" Property="Source" Value="{Binding checkBoxUnchecked}"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsChecked" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="checkboxImage" Property="Source" Value="{Binding checkBoxMouseOver}"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="alternateColor" TargetType="{x:Type ListViewItem}">
+
+            <Setter Property="BorderBrush" Value="LightGray" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                    <Setter Property="Background" Value="#CCE5FF"/>
+             
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#FFE5CC"/>
+
+                </Trigger>
+                <DataTrigger Binding="{Binding ExRequestStatus}" Value="חדש">
+                    <Setter Property="Foreground" Value="#000000" />
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding ExRequestStatus}" Value="בתהליך">
+                    <Setter Property="Foreground" Value="#0000FF" />
+                </DataTrigger>
+                <Trigger Property="IsSelected" Value="true" >
+                    <!--<Setter Property="Foreground" Value="Green" />-->
+                    <Setter Property="Background" Value="#3399FF" />
+                </Trigger>
+                <DataTrigger Binding="{Binding ScannedByUser, Mode=TwoWay}" Value="True">
+                    <Setter Property="Background" Value="#FF9933" />
+                </DataTrigger>
+                <!--<Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="IsSelected" Value="True"/>
+                </Trigger>-->
+                <!--<DataTrigger Binding="{Binding PriorityNumber}" Value="2">
+                    yellow color
+                    <Setter Property="Background" Value="#FAF56A" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding PriorityNumber}" Value="4">
+                    orange color
+                    <Setter Property="Background" Value="#FF9933" />
+                </DataTrigger>-->
+               
+
+
+
+            </Style.Triggers>
+
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="2,0,-250,-148" Background="#FFF6F1F1" Cursor="">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="210"/>
+        </Grid.ColumnDefinitions>
+        <TabControl x:Name="tabControl1" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FlowDirection="RightToLeft" ClipToBounds="True" Margin="73,140,0,0" Background="White" SelectionChanged="tabControl1_SelectionChanged"
+    			Grid.Column="0" Grid.ColumnSpan="3">
+            <TabItem x:Name="tabItem1" Tag="I" Header="אימונוהיסטוכימיה" FontWeight="Bold" FontSize="13" Width="200" Height="25" FontFamily="Segoe UI Symbol">
+                <ListView x:Name="listView1"  BorderThickness="1"
+                          ClipToBounds="True" FontWeight="Normal" FontSize="12" FontFamily="Segoe UI Symbol" SizeChanged="listView_SizeChanged" ButtonBase.Click="GridViewColumnHeaderClickedHandler"
+                          AlternationCount="2"     ItemContainerStyle="{DynamicResource alternateColor}" SelectionChanged="listView1_SelectionChanged" >
+                    <!--<ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="BorderBrush" Value="LightGray" />
+                            <Setter Property="BorderThickness" Value="0,0,0,1" />
+                            <Setter Property="Height" Value="30"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter Property="IsSelected" Value="True"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding PriorityNumber}" Value="2">
+                                    <Setter Property="Background" Value="#FAF56A" />
+                                     yellow color 
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding PriorityNumber}" Value="4">
+                                    <Setter Property="Background" Value="#FF9933" />
+                                     orange color 
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>-->
+                    <ListView.View>
+                        <GridView x:Name="gridView1">
+                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding SdgPatholabNumber}">
+                                <GridViewColumnHeader x:Name="headerSdgPatholabNumber1" Tag="SdgPatholabNumber" Content="מספר מקרה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+
+                            <GridViewColumn Width="80" DisplayMemberBinding="{Binding CreatedOn, StringFormat=dd/MM/yyyy}">
+                                <GridViewColumnHeader x:Name="headerCreatedOn1" Tag="CreatedOn" Content="תאריך קבלת החומר" FontSize="14" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <!--<GridViewColumn Width="100"  DisplayMemberBinding="{Binding BlockNumber}">
+                                <GridViewColumnHeader x:Name="headerBlockNumber1" Tag="BlockNumber" Content="מספר בלוק" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>-->
+                            <GridViewColumn DisplayMemberBinding="{Binding SlideNumber}" Width="150">
+                                <GridViewColumnHeader x:Name="headerSlideNumber1" Tag="SlideNumber" Content="מספר סלייד" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding ExRequestDetails}">
+                                <GridViewColumnHeader x:Name="headerExRequestDetails1" Tag="ExRequestDetails" Content="שם הצביעה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="70" DisplayMemberBinding="{Binding PathologName}">
+                                <GridViewColumnHeader x:Name="headerPathologName1" Tag="PathologName" Content="שם פתולוג/ית " FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding ExRequestCreatedOn, StringFormat=dd/MM/yyyy}">
+                                <GridViewColumnHeader x:Name="headerExRequestCreatedOn1" Tag="ExRequestCreatedOn" Content="תאריך הבקשה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="70" DisplayMemberBinding="{Binding ExRequestStatus}">
+                                <GridViewColumnHeader x:Name="headerExRequestStatus1" Tag="ExRequestStatus" Content="סטטוס צביעה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="80" DisplayMemberBinding="{Binding CuttingLaborant}">
+                                <GridViewColumnHeader x:Name="headerCuttingLaborant1" Tag="CuttingLaborant" Content="נחתך על ידי" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding Remarks}">
+                                <GridViewColumnHeader x:Name="headerRemarks1" Tag="Remarks" Content="הערות" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <!--
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>-->
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="DemiBold" FontSize="14" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="(" FontSize="12" FontStyle="Italic" Foreground="Gray" Margin="10,0,0,0" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="{Binding ItemCount}" FontStyle="Italic" Foreground="Gray" FontSize="12" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text=")" FontSize="12" FontStyle="Italic" Foreground="Gray" VerticalAlignment="Bottom" />
+                                                        </StackPanel>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+            </TabItem>
+            <TabItem x:Name="tabItem2" Tag="H" Header="היסטוכימיה" FontWeight="Bold" FontSize="13" Width="200" Height="25" FontFamily="Segoe UI Symbol">
+                <ListView x:Name="listView2" 
+                          AlternationCount="2"     ItemContainerStyle="{DynamicResource alternateColor}" 
+                          BorderThickness="1" ClipToBounds="True" FontWeight="Normal" FontSize="12" FontFamily="Segoe UI Symbol" SizeChanged="listView_SizeChanged" ButtonBase.Click="GridViewColumnHeaderClickedHandler">
+                    <ListView.View>
+                        <GridView x:Name="gridView2">
+                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding SdgPatholabNumber}">
+                                <GridViewColumnHeader x:Name="headerSdgPatholabNumber2" Tag="SdgPatholabNumber" Content="מספר מקרה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="80" DisplayMemberBinding="{Binding CreatedOn, StringFormat=dd/MM/yyyy}">
+                                <GridViewColumnHeader x:Name="headerCreatedOn2" Tag="CreatedOn" Content="תאריך קבלת החומר" FontSize="14" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <!--<GridViewColumn Width="100"  DisplayMemberBinding="{Binding BlockNumber}">
+                                <GridViewColumnHeader x:Name="headerBlockNumber2" Tag="BlockNumber" Content="מספר בלוק" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>-->
+                            <GridViewColumn DisplayMemberBinding="{Binding SlideNumber}" Width="150">
+                                <GridViewColumnHeader x:Name="headerSlideNumber2" Tag="SlideNumber" Content="מספר סלייד" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding ExRequestDetails}">
+                                <GridViewColumnHeader x:Name="headerExRequestDetails2" Tag="ExRequestDetails" Content="שם הצביעה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="70" DisplayMemberBinding="{Binding PathologName}">
+                                <GridViewColumnHeader x:Name="headerPathologName2" Tag="PathologName" Content="שם פתולוג/ית " FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding ExRequestCreatedOn, StringFormat=dd/MM/yyyy}">
+                                <GridViewColumnHeader x:Name="headerExRequestCreatedOn2" Tag="ExRequestCreatedOn" Content="תאריך הבקשה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="70" DisplayMemberBinding="{Binding ExRequestStatus}">
+                                <GridViewColumnHeader x:Name="headerExRequestStatus2" Tag="ExRequestStatus" Content="סטטוס צביעה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="80" DisplayMemberBinding="{Binding CuttingLaborant}">
+                                <GridViewColumnHeader x:Name="headerCuttingLaborant2" Tag="CuttingLaborant" Content="נחתך על ידי" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding Remarks}">
+                                <GridViewColumnHeader x:Name="headerRemarks2" Tag="Remarks" Content="הערות" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="DemiBold" FontSize="14" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="(" FontSize="12" FontStyle="Italic" Foreground="Gray" Margin="10,0,0,0" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="{Binding ItemCount}" FontStyle="Italic" Foreground="Gray" FontSize="12" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text=")" FontSize="12" FontStyle="Italic" Foreground="Gray" VerticalAlignment="Bottom" />
+                                                        </StackPanel>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+            </TabItem>
+            <TabItem x:Name="tabItem3" Tag="O" Header="בקשות אחרות" FontWeight="Bold" FontSize="13" Width="200" Height="25" FontFamily="Segoe UI Symbol" Margin="-3,0,3,0.333">
+                <ListView x:Name="listView3" AlternationCount="2"     ItemContainerStyle="{DynamicResource alternateColor}"   BorderThickness="1" ClipToBounds="True" FontWeight="Normal" FontSize="12" FontFamily="Segoe UI Symbol" SizeChanged="listView_SizeChanged" ButtonBase.Click="GridViewColumnHeaderClickedHandler">
+                    <ListView.View>
+                        <GridView x:Name="gridView3">
+                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding SdgPatholabNumber}">
+                                <GridViewColumnHeader x:Name="headerSdgPatholabNumber3" Tag="SdgPatholabNumber" Content="מספר מקרה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="80" DisplayMemberBinding="{Binding CreatedOn, StringFormat=dd/MM/yyyy}">
+                                <GridViewColumnHeader x:Name="headerCreatedOn3" Tag="CreatedOn" Content="תאריך קבלת החומר" FontSize="14" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <!--<GridViewColumn Width="100"  DisplayMemberBinding="{Binding BlockNumber}">
+                                <GridViewColumnHeader x:Name="headerBlockNumber3" Tag="BlockNumber" Content="מספר בלוק" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>-->
+                            <GridViewColumn DisplayMemberBinding="{Binding SlideNumber}" Width="150">
+                                <GridViewColumnHeader x:Name="headerSlideNumber3" Tag="SlideNumber" Content="מספר סלייד" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding ExRequestDetails}">
+                                <GridViewColumnHeader x:Name="headerExRequestDetails3" Tag="ExRequestDetails" Content="שם הצביעה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="70" DisplayMemberBinding="{Binding PathologName}">
+                                <GridViewColumnHeader x:Name="headerPathologName3" Tag="PathologName" Content="שם פתולוג/ית " FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding ExRequestCreatedOn, StringFormat=dd/MM/yyyy}">
+                                <GridViewColumnHeader x:Name="headerExRequestCreatedOn3" Tag="ExRequestCreatedOn" Content="תאריך הבקשה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="70" DisplayMemberBinding="{Binding ExRequestStatus}">
+                                <GridViewColumnHeader x:Name="headerExRequestStatus3" Tag="ExRequestStatus" Content="סטטוס צביעה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="80" DisplayMemberBinding="{Binding CuttingLaborant}">
+                                <GridViewColumnHeader x:Name="headerCuttingLaborant3" Tag="CuttingLaborant" Content="נחתך על ידי" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding Remarks}">
+                                <GridViewColumnHeader x:Name="headerRemarks3" Tag="Remarks" Content="הערות" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="DemiBold" FontSize="14" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="(" FontSize="12" FontStyle="Italic" Foreground="Gray" Margin="10,0,0,0" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="{Binding ItemCount}" FontStyle="Italic" Foreground="Gray" FontSize="12" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text=")" FontSize="12" FontStyle="Italic" Foreground="Gray" VerticalAlignment="Bottom" />
+                                                        </StackPanel>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+            </TabItem>
+            <TabItem x:Name="tabItem4" Tag="M" Header="חומר נוסף" FontWeight="Bold" FontSize="13" Width="200" Height="25" FontFamily="Segoe UI Symbol" Margin="-3,0,3,0.333">
+                <ListView x:Name="listView4"  BorderThickness="1" ClipToBounds="True" FontWeight="Normal" FontSize="12" FontFamily="Segoe UI Symbol"
+                            AlternationCount="2"     ItemContainerStyle="{DynamicResource alternateColor}" 
+                          SizeChanged="listView_SizeChanged" ButtonBase.Click="GridViewColumnHeaderClickedHandler" FlowDirection="RightToLeft">
+                    <ListView.View>
+                        <GridView x:Name="gridView4">
+                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding SdgPatholabNumber}">
+                                <GridViewColumnHeader x:Name="headerSdgPatholabNumber4" Tag="SdgPatholabNumber" Content="מספר מקרה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="80" DisplayMemberBinding="{Binding PathologMacroTime, StringFormat=dd/MM/yyyy}">
+                                <GridViewColumnHeader x:Name="headerPathologMacroTime4" Tag="PathologMacroTime" Content="תאריך מאקרו" FontSize="14" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <!--<GridViewColumn Width="50" DisplayMemberBinding="{Binding Priority}">
+                                <GridViewColumnHeader x:Name="headerPriority4" Tag="Priority" Content="עדיפות" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>-->
+                            <GridViewColumn Width="80" DisplayMemberBinding="{Binding CreatedOn, StringFormat=dd/MM/yyyy}">
+                                <GridViewColumnHeader x:Name="headerCreatedOn4" Tag="CreatedOn" Content="תאריך קבלת החומר" FontSize="14" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100"  DisplayMemberBinding="{Binding SampleName}">
+                                <GridViewColumnHeader x:Name="headerBlockNumber4" Tag="SampleName" Content="מספר צנצנת" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <!--<GridViewColumn Width="100" DisplayMemberBinding="{Binding ExRequestDetails}">
+                                <GridViewColumnHeader x:Name="headerExRequestDetails4" Tag="ExRequestDetails" Content="שם הצביעה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>-->
+                            <GridViewColumn Width="70" DisplayMemberBinding="{Binding PathologName}">
+                                <GridViewColumnHeader x:Name="headerPathologName4" Tag="PathologName" Content="שם פתולוג/ית " FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding ExRequestCreatedOn, StringFormat=dd/MM/yyyy}">
+                                <GridViewColumnHeader x:Name="headerExRequestCreatedOn4" Tag="ExRequestCreatedOn" Content="תאריך הבקשה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="70" DisplayMemberBinding="{Binding ExRequestStatus}">
+                                <GridViewColumnHeader x:Name="headerExRequestStatus4" Tag="ExRequestStatus" Content="סטטוס הבקשה" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <!--<GridViewColumn Width="80" DisplayMemberBinding="{Binding CuttingLaborant}">
+                                <GridViewColumnHeader x:Name="headerCuttingLaborant4" Tag="CuttingLaborant" Content="נחתך על ידי" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>-->
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding Remarks}">
+                                <GridViewColumnHeader x:Name="headerRemarks4" Tag="Remarks" Content="הערות" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100" DisplayMemberBinding="{Binding PathologMacro}">
+                                <GridViewColumnHeader x:Name="headerPathologMacro4" Tag="PathologMacro" Content="רופא מאקרו" FontSize="16" MouseRightButtonDown="GridViewColumnHeader_MouseRightButtonDown"/>
+                            </GridViewColumn>
+
+                        </GridView>
+                    </ListView.View>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">                                  
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="DemiBold" FontSize="14" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="(" FontSize="12" FontStyle="Italic" Foreground="Gray" Margin="10,0,0,0" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="{Binding ItemCount}" FontStyle="Italic" Foreground="Gray" FontSize="12" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text=")" FontSize="12" FontStyle="Italic" Foreground="Gray" VerticalAlignment="Bottom" />
+                                                        </StackPanel>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+            </TabItem>
+        </TabControl>
+        <Label x:Name="labelCloseRow" Content="בחירת מקרה" HorizontalAlignment="Left" Margin="211,17,0,0" VerticalAlignment="Top" Height="32" Width="134" FontWeight="Bold" FontSize="15" Grid.Column="1" HorizontalContentAlignment="Center"/>
+        <TextBox x:Name="textBoxCloseRow" HorizontalAlignment="Left" Height="27" Margin="211,53,0,0"
+                 TextWrapping="Wrap" VerticalAlignment="Top" Width="134" Grid.Column="1" FontSize="14" KeyDown="textBoxCloseRow_KeyDown" TextChanged="textBoxCloseRow_TextChanged"/>
+        <Button x:Name="buttonSelectRow" Style="{StaticResource CustomButton}" Content="בחר" 
+                HorizontalAlignment="Left" Height="25" Margin="372,53,0,0" VerticalAlignment="Top" Width="90" Grid.Column="1" Click="buttonSelectRow_Click"/>
+        <Label x:Name="labelTitle" Content="בקשות נוספות" HorizontalAlignment="Left" Height="57" Margin="0,21,-1,0" VerticalAlignment="Top" Width="211" FontSize="30" FontWeight="Bold" Grid.Column="2" HorizontalContentAlignment="Center"/>
+        <Button x:Name="buttonPrint" Style="{StaticResource CustomButton}" HorizontalAlignment="Left" Height="25" Margin="123,70,0,0" VerticalAlignment="Top" Width="90" Click="buttonPrint_Click" >
+            <Image Source="C:\Program Files (x86)\Thermo\Nautilus\Resource\printer.ico" Stretch="none"/>
+        </Button>
+        <Button  Visibility="Visible" x:Name="buttonCloseRow" Style="{StaticResource CustomButton}" Content="הסרה מהרשימה"
+                 HorizontalAlignment="Left" Height="25" Margin="491,53,0,0" VerticalAlignment="Top" Width="90" Grid.Column="1" Click="buttonCloseRow_Click"/>
+        <Button x:Name="buttonRefresh" Style="{StaticResource CustomButton}" Content="REFRESH" HorizontalAlignment="Left" Height="25" Margin="123,37,0,0" VerticalAlignment="Top" Width="90" Click="buttonRefresh_Click" FontWeight="Bold"/>
+        <TextBlock Height="17" Margin="0,83,10,0" TextWrapping="Wrap" Text="הצג מקרים לפי:" VerticalAlignment="Top" Width="97" FontWeight="Bold" HorizontalAlignment="Right" TextAlignment="Right" FlowDirection="RightToLeft" Grid.Column="2"/>
+        <RadioButton x:Name="radio_None" Content="ללא" HorizontalAlignment="Left" Margin="160,105,0,0" VerticalAlignment="Top" FlowDirection="RightToLeft" IsChecked="True" Checked="radio_None_Checked" Grid.Column="2" RenderTransformOrigin="10.75,0.667"/>
+        <RadioButton x:Name="radio_Number" Content="מספר מקרה" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" FlowDirection="RightToLeft" Checked="radio_Number_Checked" RenderTransformOrigin="-0.476,0.333" Grid.Column="2" />
+        <RadioButton x:Name="radio_Date" Content="תאריך" HorizontalAlignment="Left" Margin="103,105,0,0" VerticalAlignment="Top" FlowDirection="RightToLeft" Checked="radio_Date_Checked" Grid.Column="2" />
+    </Grid>
+</UserControl>
