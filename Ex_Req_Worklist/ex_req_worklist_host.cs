@@ -1,39 +1,20 @@
-﻿using System;
-
-using System.Collections.Generic;
-
-using System.ComponentModel;
-
-using System.Drawing;
-
-using System.Data;
-
-using System.Linq;
-
-using System.Text;
-
-using System.Threading.Tasks;
-
-using LSExtensionWindowLib;
-
+﻿using LSExtensionWindowLib;
 using LSSERVICEPROVIDERLib;
-
-using Patholab_DAL_V1;
-
+using Oracle.ManagedDataAccess.Client;
 //using Oracle.ManagedDataAccess.Client;
 
 using Patholab_Common;
-
+using Patholab_DAL_V1;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
-
-using System.Windows.Input;
-
+using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using Telerik.WinControls.UI;
-
-using Telerik.WinControls;
-using Oracle.ManagedDataAccess.Client;
 
 
 //using Telerik.WinControls.Data;
@@ -91,56 +72,66 @@ namespace Ex_Req_Worklist
         private static Dictionary<string, string> dict = new Dictionary<string, string>();
 
         private bool winforms = true;
+        private bool flag;
+        List<int> reqList2Close = new List<int>();
+
         #endregion
 
         #region implementing interface
 
-
-
-        public bool CloseQuery()
-
+        public ex_req_worklist_host()
         {
-
-            DialogResult res = MessageBox.Show(@"?האם אתה בטוח שברצונך לצאת ", "ex_req_worklist", MessageBoxButtons.YesNo);
-
-
-
-            if (res == DialogResult.Yes)
-
+            try
             {
 
-                if (dal != null)
+                InitializeComponent();
 
+                this.Disposed += PatholabWorkList_Disposed;
+
+                BackColor = Color.FromName("Control");
+
+                this.Dock = DockStyle.Fill;
+
+                this.AutoSize = true;
+
+                this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+                tabHedears = new string[tabControl1.TabCount];
+
+            }
+
+            catch (Exception e)
+            {
+
+                MessageBox.Show(e.Message);
+
+            }
+
+        }
+
+        public bool CloseQuery()
+        {
+            DialogResult res = MessageBox.Show(@"?האם אתה בטוח שברצונך לצאת ", "ex_req_worklist", MessageBoxButtons.YesNo);
+
+            if (res == DialogResult.Yes)
+            {
+                if (dal != null)
                 {
 
                     dal.Close();
 
                     dal = null;
-
                 }
 
                 if (_ntlsSite != null) _ntlsSite = null;
 
-
-
-                //     if (connection != null) connection.Close();
-
-
-
                 this.Dispose();
 
-
-
                 return true;
-
             }
-
             else
-
             {
-
                 return false;
-
             }
 
         }
@@ -148,7 +139,6 @@ namespace Ex_Req_Worklist
 
 
         public WindowRefreshType DataChange()
-
         {
 
             return LSExtensionWindowLib.WindowRefreshType.windowRefreshNone;
@@ -283,15 +273,10 @@ namespace Ex_Req_Worklist
 
         #endregion
 
-
         private Dictionary<string, string> PriorityDict()
-
         {
 
-
-
             if (dict.Count() < 1 && dal != null)
-
             {
 
                 PHRASE_HEADER header = dal.FindBy<PHRASE_HEADER>(ph => ph.NAME.Equals("Priority")).FirstOrDefault();
@@ -333,63 +318,51 @@ namespace Ex_Req_Worklist
 
 
         }
-
-        public ex_req_worklist_host()
-
+        private void initDal()
         {
-
             try
 
             {
+                dal = new DataLayer();
 
-                InitializeComponent();
+                if (debug)
 
-                this.Disposed += PatholabWorkList_Disposed;
+                {
+                    //For running without Nautilus.
 
-                BackColor = Color.FromName("Control");
+                    dal.MockConnect();
+                    oraCon = dal.GetOracleConnection(_ntlsCon);
 
-                this.Dock = DockStyle.Fill;
+                }
 
-                this.AutoSize = true;
-
-                this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-
-                tabHedears = new string[tabControl1.TabCount];
-
-
-
-            }
-
-            catch (Exception e)
-
-            {
-
-                MessageBox.Show(e.Message);
-
-            }
-
-        }
-
-        void PatholabWorkList_Disposed(object sender, EventArgs e)
-
-        {
-
-            GC.Collect();
-
-        }
-
-        public void activateWorkListWindow()
-
-        {
-
-            try
-
-            {
-
-                if (winforms)
+                else
 
                 {
 
+                    dal.Connect(_ntlsCon);
+                    oraCon = dal.GetOracleConnection(_ntlsCon);
+
+                }
+
+
+                PriorityDict();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"From initDal: {ex.Message}");
+            }
+        }
+        void PatholabWorkList_Disposed(object sender, EventArgs e)
+        {
+            GC.Collect();
+        }
+        public void activateWorkListWindow()
+        {
+            try
+            {
+                if (winforms)
+                {
                     int i = 0;
 
                     foreach (TabPage tab in this.tabControl1.TabPages)
@@ -403,80 +376,20 @@ namespace Ex_Req_Worklist
                     }
 
                     initDal();
-                    LoadDataFromDB();
-                }
-
-                else
-
-                {
-
+                    _ = LoadDataFromDB();
                 }
 
             }
-
             catch (Exception ex)
-
             {
-
                 MessageBox.Show(ex.Message);
-
             }
 
         }
 
-        private void initDal()
-
-        {
-
-            try
-
-            {
-
-                //Connect to DB
-
-                dal = new DataLayer();
-
-                if (debug)
-
-                {
-
-                    //For running without Nautilus.
-
-                    dal.MockConnect();
-                    oraCon = GetOracleConnection(_ntlsCon);
-
-                }
-
-                else
-
-                {
-
-                    dal.Connect(_ntlsCon);
-                    oraCon = GetOracleConnection(_ntlsCon);
-
-                }
-
-
-                //PriorityDict();
-
-                // This dict maps each PartType ("I" / "H" ......) to a Tuple containing the ListView and List associated with the partType
-
-            }
-
-            catch (Exception ex)
-
-            {
-               MessageBox.Show(ex.Message);
-            }
-
-
-
-        }
-
+        //---------------------------------------------
         private async Task LoadDataFromDB()
         {
-
-
             listPart_Histochemistry_Others = new List<ExtraRequestRow>();
 
             listPart_Immono = new List<ExtraRequestRow>();
@@ -497,16 +410,14 @@ namespace Ex_Req_Worklist
 
                 setListCellBlock();
                 setListPap();
-                // Once all three tasks are completed, run UpdateTabPages()
                 UpdateTabPages();
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("6");
+                MessageBox.Show($"From LoadDataFromDB: {ex.Message}");
             }
 
         }
-
         private void UpdateTabPages()
         {
             int i = 0;
@@ -544,14 +455,149 @@ namespace Ex_Req_Worklist
                 i++;
             }
         }
-
-        void c_grid_RowFormatting(object sender, RowFormattingEventArgs e)
+        private void refreshPage()
 
         {
 
-            throw new NotImplementedException();
+            _ = LoadDataFromDB();
+
+            TabPage c_tab = this.tabControl1.SelectedTab;
+
+            RadGridView c_grid = c_tab.Controls.OfType<RadGridView>().FirstOrDefault();
+
+            c_grid.Rows[0].IsCurrent = true;
+
+            c_grid.Rows[0].IsSelected = true;
+
+            c_grid.TableElement.ScrollToRow(0);
+
+
+
+
 
         }
+        private void buttonRefresh_Click(object sender, EventArgs e)
+        {
+            buttonRefresh.Enabled = false;
+            refreshPage();
+            buttonRefresh.Enabled = true;
+        }
+        private void buttonPrint_Click(object sender, EventArgs e)
+
+        {
+
+            TabPage c_tab = this.tabControl1.SelectedTab;
+
+            RadGridView c_grid = c_tab.Controls.OfType<RadGridView>().FirstOrDefault();
+
+            RadPrintDocument setingsPrint = new RadPrintDocument();
+
+            setingsPrint.PrinterSettings.PrinterName = "Microsoft Print to PDF";
+
+            setingsPrint.DefaultPageSettings.Landscape = true;
+
+            c_grid.Print(true, setingsPrint);
+
+
+
+        }
+        private void radGridView_RowFormatting(object sender, RowFormattingEventArgs e)
+        {
+
+            //ResetRowValue(e);
+
+            var row = e.RowElement.Data.DataBoundItem as ExtraRequestRow;
+
+            e.RowElement.DrawFill = true;
+
+
+
+
+
+            if (row.ScannedByUser)
+            {
+
+                if (e.RowElement.IsSelected)
+
+                {
+
+                    e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#FF8000");
+
+
+
+                }
+
+                else
+
+                {
+
+                    e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#FF9933");
+
+                }
+
+
+
+            }
+
+            else
+            {
+                if (e.RowElement.IsSelected)
+
+                {
+
+                    e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#3399FF");
+
+                }
+
+                else
+
+                {
+
+                    if (e.RowElement.IsOdd)
+
+                    {
+
+                        e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#CCE5FF");//CCE5FF         
+
+                    }
+
+                    else
+
+                    {
+
+                        e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#FFE5CC");//FFE5CC
+
+                    }
+
+
+
+                    if (row.ExRequestStatus == "חדש")
+
+                    {
+
+                        e.RowElement.ForeColor = (Color)System.Drawing.ColorTranslator.FromHtml("#000000");
+
+                    }
+
+                    else if (row.ExRequestStatus == "בתהליך")
+
+                    {
+
+                        e.RowElement.ForeColor = (Color)System.Drawing.ColorTranslator.FromHtml("#0000FF");
+
+                    }
+
+                }
+
+            }
+
+
+
+        }
+
+
+
+        #region list settings
 
         private void setListPap()
         {
@@ -720,7 +766,7 @@ namespace Ex_Req_Worklist
 
 
 
-             
+
 
                 if (GridExMaterial.InvokeRequired)
                 {
@@ -752,18 +798,15 @@ namespace Ex_Req_Worklist
         }
 
         private void SetListImmonoHisOthers()
-
         {
-
             try
-
             {
                 string query = "select * from lims.EXTRA_SLIDES";
                 List<ExtraRequestRow> ex_s = new List<ExtraRequestRow>();
 
                 using (OracleCommand cmd = new OracleCommand(query, oraCon))
                 {
-                    using (var reader =  cmd.ExecuteReader())
+                    using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -801,6 +844,8 @@ namespace Ex_Req_Worklist
                 ex_s.OrderBy(x => x.CreatedOn.HasValue ? x.CreatedOn.Value : DateTime.Now).ThenBy(x => x.SdgPatholabNumber).ThenBy(x => x.Priority_num).ToList();
 
 
+
+
                 //נתנאל ביקש
 
                 //אם לבלוק יש גם בקשת אימונו וגם היסטוכימיה אז שיופיע רק באימונוהיסטוכימיה
@@ -808,6 +853,36 @@ namespace Ex_Req_Worklist
                 //ואם יש לו רק בקשת היסטוכימיה אז צריך להופיע רק בהיסטוכימיה
 
                 //ואם יש לו רק בקשת אימונו אז צריך להופיע רק באימונוהיסטוכימיה
+
+                //var groupbyBlockNumber = ex_s.GroupBy(x => x.BlockNumber);
+                //Debugger.Launch();
+                //foreach (var reqsOnBlock in groupbyBlockNumber)
+                //{
+                //    if (reqsOnBlock.Any(x => x.RequestType == "I"))
+                //    {
+                //        listPart_Immono.AddRange(reqsOnBlock);
+                //    }
+                //    else
+                //    {
+                //        if (reqsOnBlock.Any(x => x.RequestType == "O" || x.RequestType == "H"))
+                //            listPart_Histochemistry_Others.AddRange(reqsOnBlock);
+                //    }
+                //}
+                //if (GridImmono.InvokeRequired)
+                //{
+                //    //If we're not on the UI thread, invoke this method on the UI thread
+                //    GridImmono.Invoke((MethodInvoker)delegate
+                //    {
+                //        GridImmono.DataSource = listPart_Immono;
+                //        GridHistochemistry.DataSource = listPart_Histochemistry_Others;
+                //    });
+                //}
+                //else
+                //{
+                //    // If we are already on the UI thread, directly set the DataSource
+                //    GridImmono.DataSource = listPart_Immono;
+                //    GridHistochemistry.DataSource = listPart_Histochemistry_Others;
+                //}
 
 
 
@@ -818,7 +893,7 @@ namespace Ex_Req_Worklist
                 using (OracleCommand cmd = new OracleCommand(query, oraCon))
                 {
 
-                    using (var reader =  cmd.ExecuteReader())
+                    using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -838,7 +913,6 @@ namespace Ex_Req_Worklist
                     foreach (var CreatedOnGrp in groupbyCreatedOn)
                     {
                         var NestedGrpbyType = CreatedOnGrp.GroupBy(x => x.RequestType);
-                        //var Has_status_p = dal.IfExitEXTRA_SLIDES_STATUS_P(blockGrp.Key, CreatedOnGrp.Key.Value.ToString("dd/MM/yyyy"));
                         var Has_status_p = xxx.Where(x => x.BLOCKNUMBER == blockGrp.Key && CreatedOnGrp.Key.Value.ToString("dd/MM/yyyy").Equals(x.EXREQUESTCREATEDON)).Count();
                         var HasImmuno = NestedGrpbyType.Where(t => t.Key == "I").FirstOrDefault();
 
@@ -885,87 +959,48 @@ namespace Ex_Req_Worklist
 
             {
 
-                MessageBox.Show("SetListImmonoHisOthers");
+                MessageBox.Show($"SetListImmonoHisOthers : {ex.Message}");
 
             }
 
         }
 
-        private void refreshPage()
+        #endregion
 
+        #region delete rows region
+        private void buttonSelectRow_Click(object sender, EventArgs e)
         {
-
-            LoadDataFromDB();
-
-            TabPage c_tab = this.tabControl1.SelectedTab;
-
-            RadGridView c_grid = c_tab.Controls.OfType<RadGridView>().FirstOrDefault();
-
-            c_grid.Rows[0].IsCurrent = true;
-
-            c_grid.Rows[0].IsSelected = true;
-
-            c_grid.TableElement.ScrollToRow(0);
-
-
-
-
-
+            SelectRow();
         }
-
-        private void buttonRefresh_Click(object sender, EventArgs e)
-
+        private void textBoxCloseRow_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            buttonRefresh.Enabled = false;
-            refreshPage();
-            buttonRefresh.Enabled = true;   
-
-        }
-
-        private void buttonCloseRow_Click(object sender, EventArgs e)
-
-        {
-
-            try
-
+            if (e.KeyCode == Keys.Enter)
             {
-
+                SelectRow();
+            }
+        }
+        private void buttonCloseRow_Click(object sender, EventArgs e)
+        {
+            try
+            {
                 var result = MessageBox.Show("האם להסיר את הסליידים שסומנו?", "הסרת סליידים", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
-
-
-
                 if (result == DialogResult.Yes)
-
                 {
-
                     int countCloseRows = 0;
-
                     int countProcessRows = 0;
 
-
-
                     TabPage c_tab = this.tabControl1.SelectedTab;
-
                     RadGridView c_grid = c_tab.Controls.OfType<RadGridView>().FirstOrDefault();
 
-
-
-                    foreach (GridViewRowInfo selectedItem in c_grid.Rows)
-
+                    foreach (int index in reqList2Close)
                     {
-
-
-                        ExtraRequestRow slide = selectedItem.DataBoundItem as ExtraRequestRow;
+                        ExtraRequestRow slide = c_grid.Rows[index].DataBoundItem as ExtraRequestRow;
 
                         var tab = c_grid.Parent as TabPage;
                         string tabTitle = tab.Text;
 
-
-
                         if (slide != null && slide.ScannedByUser)
-
                         {
-
                             Logger.WriteLogFile("slide found : " + slide.SlideNumber);
 
                             if (tabTitle.Contains("Cell Block"))
@@ -973,33 +1008,22 @@ namespace Ex_Req_Worklist
                                 dal.FindBy<ALIQUOT>(x => x.NAME == slide.SlideNumber).FirstOrDefault().STATUS = "X";
                             }
 
-
                             if (slide.ExRequestStatus == "בתהליך")
-
                             {
-
                                 Logger.WriteLogFile("slide in process : " + slide.SlideNumber);
-
                                 countProcessRows++;
-
                             }
 
                             else
-
                             {
-
                                 U_EXTRA_REQUEST_DATA_USER requestToColse =
 
                                     dal.FindBy<U_EXTRA_REQUEST_DATA_USER>
 
                                     (item => item.U_EXTRA_REQUEST_DATA_ID == slide.ExRequestId).FirstOrDefault();
 
-
-
                                 if (requestToColse != null)
-
                                 {
-
                                     Logger.WriteLogFile("slide found in data user : " + requestToColse.U_SLIDE_NAME);
 
                                     //var exrd = dal.FindBy<U_EXTRA_REQUEST_DATA_USER>(x => x.U_EXTRA_REQUEST_DATA_ID == slide.ExRequestId).SingleOrDefault();
@@ -1014,17 +1038,11 @@ namespace Ex_Req_Worklist
                                     countCloseRows++;
 
                                     Logger.WriteLogFile("the update sucsess the status is : " + exrd.U_STATUS);
-
-
-
                                 }
 
                                 else
-
                                 {
-
                                     Logger.WriteLogFile("slide not found in data user : " + requestToColse.U_SLIDE_NAME);
-
                                 }
 
                             }
@@ -1035,10 +1053,9 @@ namespace Ex_Req_Worklist
 
                     }
 
-
+                    reqList2Close.Clear();
 
                     dal.SaveChanges();
-
                     refreshPage();
 
                     textBoxCloseRow.Text = string.Empty;
@@ -1082,147 +1099,18 @@ namespace Ex_Req_Worklist
             }
 
         }
-
-        private void textBoxCloseRow_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-
+        private void SelectRow()
         {
-
-            if (e.KeyCode == Keys.Enter)
-
+            if (textBoxCloseRow.Text == String.Empty)
             {
-
-                selectedRow();
-
+                MessageBox.Show("חובה למלא ערך בשדה מקרה ");
+                flag = false;
+                return;
             }
 
-        }
+            AddReq2List();
 
-        private void deleteRow()
-
-        {
-
-            TabPage c_tab = this.tabControl1.SelectedTab;
-
-            RadGridView c_grid = c_tab.Controls.OfType<RadGridView>().FirstOrDefault();
-
-
-
-
-
-
-
-            if (!string.IsNullOrEmpty(textBoxCloseRow.Text))
-
-            {
-
-
-
-
-
-                var datalist = c_grid.DataSource as List<ExtraRequestRow>;
-
-
-
-
-
-                var req2Close = datalist.Where
-
-                (item => (item.SlideNumber != null
-
-                          && item.SlideNumber.Equals(textBoxCloseRow.Text)
-
-                          //&& item.ExRequestEntityType == "Block"
-                          )
-
-
-
-                         ||
-
-                         (item.SampleName != null &&
-
-                          item.SampleName.Equals(textBoxCloseRow.Text)
-
-                          //&& item.ExRequestEntityType == "Sample"
-                          )
-                          );
-
-
-
-
-
-
-
-
-
-
-
-                if (req2Close.Count() < 1)
-
-                {
-
-                    MessageBox.Show("Request with the given aliquot name cannot be found.");
-                    return;
-
-
-
-                }
-
-                if (req2Close.Count() > 1)
-
-                {
-
-                    MessageBox.Show("קיימת יותר מבקשה אחת לאותה יישות,רק ישות אחד תרד מהרשימה", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                }
-
-
-                var firstReq = req2Close.First();
-
-                req2Close.First().ScannedByUser = true;
-
-                //Galina 05/12/2023
-
-                int index = c_grid.CurrentRow.Index;
-
-                if (tabControl1.TabPages.IndexOfKey(c_tab.Name) == 2 || tabControl1.TabPages.IndexOfKey(c_tab.Name) == 4)
-
-                    index = datalist.FindIndex(a => a.SampleName == firstReq.SampleName);
-
-                else
-
-                    index = datalist.FindIndex(a => a.SlideNumber == firstReq.SlideNumber);
-
-                c_grid.Rows[index].IsSelected = true;
-
-
-
-
-
-                textBoxCloseRow.Text = string.Empty;
-
-            }
-
-
-
-        }
-
-        private void buttonSelectRow_Click(object sender, EventArgs e)
-
-        {
-
-            selectedRow();
-
-
-
-        }
-
-        private void selectedRow()
-
-        {
-
-            deleteRow();
-
-
+            if (!flag) return;
 
             TabPage c_tab = this.tabControl1.SelectedTab;
 
@@ -1230,404 +1118,85 @@ namespace Ex_Req_Worklist
 
             GridTableElement tableElement = c_grid.CurrentView as GridTableElement;
 
-
-
-
-
             int indx = GetFirstVisibleRowIndex();
 
             if (indx != -1)
-
             {
-
-                if (indx != c_grid.Rows.Count - 1)
-
-                    tableElement.ScrollToRow(c_grid.Rows[indx + 1]);
-
-                else
-
-                    tableElement.ScrollToRow(c_grid.Rows[indx - 1]);
-
-
-
                 tableElement.ScrollToRow(c_grid.Rows[indx]);
+            }
+        }
+        private void AddReq2List()
+        {
 
+            TabPage c_tab = this.tabControl1.SelectedTab;
+            RadGridView c_grid = c_tab.Controls.OfType<RadGridView>().FirstOrDefault();
 
+            var datalist = c_grid.DataSource as List<ExtraRequestRow>;
 
+            var req2Close = datalist.Where(item => (item.SlideNumber != null && item.SlideNumber.Equals(textBoxCloseRow.Text)) ||
 
+                     (item.SampleName != null && item.SampleName.Equals(textBoxCloseRow.Text)));
 
+            flag = true;
+
+            if (req2Close.Count() < 1)
+            {
+                MessageBox.Show("לא ניתן למצוא בקשה עם השם הנתון.");
+                textBoxCloseRow.Text = string.Empty;
+                flag = false;
+                return;
             }
 
+            if (req2Close.Count() > 1)
+            {
+                MessageBox.Show("קיימת יותר מבקשה אחת לאותה יישות,רק ישות אחד תרד מהרשימה", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            var firstReq = req2Close.First();
+
+            req2Close.First().ScannedByUser = true;
+
+            //Galina 05/12/2023
+
+            int index = c_grid.CurrentRow.Index;
+
+            if (tabControl1.TabPages.IndexOfKey(c_tab.Name) == 2 || tabControl1.TabPages.IndexOfKey(c_tab.Name) == 4)
+
+                index = datalist.FindIndex(a => a.SampleName == firstReq.SampleName);
+
+            else
+
+                index = datalist.FindIndex(a => a.SlideNumber == firstReq.SlideNumber);
+
+            c_grid.Rows[index].IsSelected = true;
+
+            textBoxCloseRow.Text = string.Empty;
 
 
-        }
 
+            reqList2Close.Add(index);
+
+
+        }      
         public int GetFirstVisibleRowIndex()
-
         {
 
             TabPage c_tab = this.tabControl1.SelectedTab;
 
             RadGridView c_grid = c_tab.Controls.OfType<RadGridView>().FirstOrDefault();
 
-
-
             foreach (GridRowElement row in c_grid.TableElement.VisualRows)
-
             {
 
                 if (row.RowInfo is GridViewDataRowInfo || row.RowInfo is GridViewGroupRowInfo)
-
                 {
-
                     return row.RowInfo.Index;
-
                 }
 
             }
-
             return -1;
-
         }
-
-        private void buttonPrint_Click(object sender, EventArgs e)
-
-        {
-
-            TabPage c_tab = this.tabControl1.SelectedTab;
-
-            RadGridView c_grid = c_tab.Controls.OfType<RadGridView>().FirstOrDefault();
-
-            RadPrintDocument setingsPrint = new RadPrintDocument();
-
-            setingsPrint.PrinterSettings.PrinterName = "Microsoft Print to PDF";
-
-            setingsPrint.DefaultPageSettings.Landscape = true;
-
-            c_grid.Print(true, setingsPrint);
-
-
-
-        }
-
-        private void radGridView_ViewCellFormatting(object sender, CellFormattingEventArgs e)
-
-        {
-
-            if (e.CellElement is GridHeaderCellElement)
-
-            {
-
-                e.CellElement.GradientStyle = Telerik.WinControls.GradientStyles.Solid;
-
-                e.CellElement.Font = f;
-
-            }
-
-            else
-
-            {
-
-                e.CellElement.GradientStyle = Telerik.WinControls.GradientStyles.Solid;
-
-                e.CellElement.Font = f;
-
-            }
-
-        }
-
-        private void radGridView_RowFormatting(object sender, RowFormattingEventArgs e)
-
-        {
-
-            //ResetRowValue(e);
-
-            var row = e.RowElement.Data.DataBoundItem as ExtraRequestRow;
-
-            e.RowElement.DrawFill = true;
-
-
-
-
-
-            if (row.ScannedByUser)
-
-            {
-
-                if (e.RowElement.IsSelected)
-
-                {
-
-                    e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#FF8000");
-
-
-
-                }
-
-                else
-
-                {
-
-                    e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#FF9933");
-
-                }
-
-
-
-            }
-
-            else
-
-            {
-
-                if (e.RowElement.IsSelected)
-
-                {
-
-                    e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#3399FF");
-
-                }
-
-                else
-
-                {
-
-                    if (e.RowElement.IsOdd)
-
-                    {
-
-                        e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#CCE5FF");//CCE5FF         
-
-                    }
-
-                    else
-
-                    {
-
-                        e.RowElement.BackColor = (Color)System.Drawing.ColorTranslator.FromHtml("#FFE5CC");//FFE5CC
-
-                    }
-
-
-
-                    if (row.ExRequestStatus == "חדש")
-
-                    {
-
-                        e.RowElement.ForeColor = (Color)System.Drawing.ColorTranslator.FromHtml("#000000");
-
-                    }
-
-                    else if (row.ExRequestStatus == "בתהליך")
-
-                    {
-
-                        e.RowElement.ForeColor = (Color)System.Drawing.ColorTranslator.FromHtml("#0000FF");
-
-                    }
-
-                }
-
-            }
-
-
-
-        }
-
-        private void tabExMaterial_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-
-        {
-
-            TabPage c_tab = this.tabControl1.SelectedTab;
-
-            if (tabControl1.TabPages.IndexOfKey(c_tab.Name) == 2)
-
-                buttonCloseRow.Text = "הוצאה מהמחסן";
-
-            else if (tabControl1.TabPages.IndexOfKey(c_tab.Name) == 3)
-                buttonCloseRow.Text = "cancel cell block";
-
-            else
-
-                buttonCloseRow.Text = "הסרה מהרשימה";
-
-        }
-
-        void radGridView_GroupSummaryEvaluate(object sender, Telerik.WinControls.UI.GroupSummaryEvaluationEventArgs e)
-
-        {
-
-            //c_grid.Columns["CreatedOn"].FormatString = "{0:dd/MM/yyyy}";
-
-            string header = null;
-
-            bool sort = true;
-
-
-
-            switch (e.SummaryItem.Name)
-
-            {
-
-                case "CreatedOn":
-
-                    header = "תאריך קבלת החומר";
-
-                    break;
-
-                case "ExRequestCreatedOn":
-
-                    header = "תאריך הבקשה";
-
-                    break;
-
-                case "PathologMacroTime":
-
-                    header = "תאריך מאקרו";
-
-                    break;
-
-                default:
-
-                    sort = false;
-
-                    break;
-
-            }
-
-            if (sort)
-
-            {
-
-                e.FormatString = String.Format("{0} : {1}", header, e.Value != null ? ((DateTime)e.Value).ToString("dd/MM/yyyy") : "");
-
-            }
-
-        }
-
-        public OracleConnection GetOracleConnection(INautilusDBConnection ntlsCon)
-        {
-
-            OracleConnection connection = null;
-
-            if (ntlsCon != null)
-            {
-
-
-                // Initialize variables
-                String roleCommand;
-                // Try/Catch block
-                try
-                {
-
-
-                    var C = ntlsCon.GetServerIsProxy();
-                    var C2 = ntlsCon.GetServerName();
-                    var C4 = ntlsCon.GetServerType();
-
-                    var C6 = ntlsCon.GetServerExtra();
-
-                    var C8 = ntlsCon.GetPassword();
-                    var C9 = ntlsCon.GetLimsUserPwd();
-                    var C10 = ntlsCon.GetServerIsProxy();
-                    //var DD = _ntlsSite;
-
-
-
-
-                    //var u = _ntlsUser.GetOperatorName();
-                    //var u1 = _ntlsUser.GetWorkstationName();
-
-
-
-                    string _connectionString = ntlsCon.GetADOConnectionString();
-
-                    var splited = _connectionString.Split(';');
-
-                    var cs = "";
-
-                    for (int i = 1; i < splited.Count(); i++)
-                    {
-                        cs += splited[i] + ';';
-                    }
-                    //<<<<<<< .mine
-                    var username = ntlsCon.GetUsername();
-                    if (string.IsNullOrEmpty(username))
-                    {
-                        var serverDetails = ntlsCon.GetServerDetails();
-                        cs = "User Id=/;Data Source=" + serverDetails + ";";
-                    }
-
-
-                    //Create the connection
-                    connection = new OracleConnection(cs);
-
-
-
-                    // Open the connection
-                    connection.Open();
-
-                    // Get lims user password
-                    string limsUserPassword = ntlsCon.GetLimsUserPwd();
-
-                    // Set role lims user
-                    if (limsUserPassword == "")
-                    {
-                        // LIMS_USER is not password protected
-                        roleCommand = "set role lims_user";
-                    }
-                    else
-                    {
-                        // LIMS_USER is password protected.
-                        roleCommand = "set role lims_user identified by " + limsUserPassword;
-                    }
-
-                    // set the Oracle user for this connecition
-                    OracleCommand command = new OracleCommand(roleCommand, connection);
-
-                    // Try/Catch block
-                    try
-                    {
-                        // Execute the command
-                        command.ExecuteNonQuery();
-                    }
-                    catch (Exception f)
-                    {
-                        // Throw the exception
-                        throw new Exception("Inconsistent role Security : " + f.Message);
-                    }
-
-                    // Get the session id
-                    _session_id = ntlsCon.GetSessionId();
-
-                    // Connect to the same session
-                    string sSql = string.Format("call lims.lims_env.connect_same_session({0})", _session_id);
-
-                    // Build the command
-                    command = new OracleCommand(sSql, connection);
-
-                    // Execute the command
-                    command.ExecuteNonQuery();
-
-                }
-                catch (Exception e)
-                {
-                    // Throw the exception
-                    throw e;
-                }
-
-                // Return the connection
-            }
-
-            return connection;
-
-        }
-
+        #endregion
     }
     public class RequestInfo
     {

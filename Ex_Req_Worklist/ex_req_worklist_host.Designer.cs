@@ -1,4 +1,8 @@
-﻿namespace Ex_Req_Worklist
+﻿using System;
+using System.Windows.Forms;
+using Telerik.WinControls.UI;
+
+namespace Ex_Req_Worklist
 {
     partial class ex_req_worklist_host
     {
@@ -368,7 +372,6 @@
             this.tabExMaterial.TabIndex = 0;
             this.tabExMaterial.Text = "חומר נוסף";
             this.tabExMaterial.UseVisualStyleBackColor = true;
-            this.tabExMaterial.Click += new System.EventHandler(this.tabExMaterial_Click);
             // 
             // GridExMaterial
             // 
@@ -600,7 +603,7 @@
             this.buttonRefresh.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.buttonRefresh.Font = new System.Drawing.Font("Arial Rounded MT Bold", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonRefresh.ForeColor = System.Drawing.Color.DarkSlateGray;
-            this.buttonRefresh.Location = new System.Drawing.Point(152, 25);
+            this.buttonRefresh.Location = new System.Drawing.Point(33, 23);
             this.buttonRefresh.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(133, 28);
@@ -614,7 +617,7 @@
             this.buttonPrint.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.buttonPrint.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonPrint.Image = global::Ex_Req_Worklist.Properties.Resources.Printer;
-            this.buttonPrint.Location = new System.Drawing.Point(152, 60);
+            this.buttonPrint.Location = new System.Drawing.Point(33, 55);
             this.buttonPrint.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonPrint.Name = "buttonPrint";
             this.buttonPrint.Size = new System.Drawing.Size(133, 28);
@@ -635,18 +638,16 @@
             // 
             // buttonSelectRow
             // 
-            this.buttonSelectRow.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.buttonSelectRow.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.buttonSelectRow.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSelectRow.ForeColor = System.Drawing.Color.DarkSlateGray;
-            this.buttonSelectRow.Location = new System.Drawing.Point(9, 13);
+            this.buttonSelectRow.Location = new System.Drawing.Point(354, 38);
             this.buttonSelectRow.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonSelectRow.Name = "buttonSelectRow";
-            this.buttonSelectRow.Size = new System.Drawing.Size(137, 25);
+            this.buttonSelectRow.Size = new System.Drawing.Size(137, 34);
             this.buttonSelectRow.TabIndex = 8;
             this.buttonSelectRow.Text = "בחר";
             this.buttonSelectRow.UseVisualStyleBackColor = false;
-            this.buttonSelectRow.Visible = false;
             this.buttonSelectRow.Click += new System.EventHandler(this.buttonSelectRow_Click);
             // 
             // buttonCloseRow
@@ -654,10 +655,10 @@
             this.buttonCloseRow.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.buttonCloseRow.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonCloseRow.ForeColor = System.Drawing.Color.DarkSlateGray;
-            this.buttonCloseRow.Location = new System.Drawing.Point(291, 40);
+            this.buttonCloseRow.Location = new System.Drawing.Point(172, 38);
             this.buttonCloseRow.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonCloseRow.Name = "buttonCloseRow";
-            this.buttonCloseRow.Size = new System.Drawing.Size(200, 30);
+            this.buttonCloseRow.Size = new System.Drawing.Size(176, 34);
             this.buttonCloseRow.TabIndex = 9;
             this.buttonCloseRow.Text = "הסרה מהרשימה";
             this.buttonCloseRow.UseVisualStyleBackColor = false;
@@ -665,10 +666,12 @@
             // 
             // textBoxCloseRow
             // 
-            this.textBoxCloseRow.Location = new System.Drawing.Point(497, 43);
+            this.textBoxCloseRow.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.textBoxCloseRow.Location = new System.Drawing.Point(497, 38);
             this.textBoxCloseRow.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.textBoxCloseRow.Multiline = true;
             this.textBoxCloseRow.Name = "textBoxCloseRow";
-            this.textBoxCloseRow.Size = new System.Drawing.Size(148, 22);
+            this.textBoxCloseRow.Size = new System.Drawing.Size(148, 34);
             this.textBoxCloseRow.TabIndex = 10;
             this.textBoxCloseRow.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxCloseRow_KeyDown);
             // 
@@ -720,6 +723,94 @@
             this.PerformLayout();
 
         }
+        private void radGridView_ViewCellFormatting(object sender, CellFormattingEventArgs e)
+
+        {
+
+            if (e.CellElement is GridHeaderCellElement)
+
+            {
+
+                e.CellElement.GradientStyle = Telerik.WinControls.GradientStyles.Solid;
+
+                e.CellElement.Font = f;
+
+            }
+
+            else
+
+            {
+
+                e.CellElement.GradientStyle = Telerik.WinControls.GradientStyles.Solid;
+
+                e.CellElement.Font = f;
+
+            }
+
+        }
+
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            TabPage c_tab = this.tabControl1.SelectedTab;
+
+            if (tabControl1.TabPages.IndexOfKey(c_tab.Name) == 2)
+
+                buttonCloseRow.Text = "הוצאה מהמחסן";
+
+            else if (tabControl1.TabPages.IndexOfKey(c_tab.Name) == 3)
+                buttonCloseRow.Text = "cancel cell block";
+
+            else
+
+                buttonCloseRow.Text = "הסרה מהרשימה";
+        }
+        void radGridView_GroupSummaryEvaluate(object sender, Telerik.WinControls.UI.GroupSummaryEvaluationEventArgs e)
+        {
+
+            string header = null;
+
+            bool sort = true;
+
+            switch (e.SummaryItem.Name)
+            {
+
+                case "CreatedOn":
+
+                    header = "תאריך קבלת החומר";
+
+                    break;
+
+                case "ExRequestCreatedOn":
+
+                    header = "תאריך הבקשה";
+
+                    break;
+
+                case "PathologMacroTime":
+
+                    header = "תאריך מאקרו";
+
+                    break;
+
+                default:
+
+                    sort = false;
+
+                    break;
+            }
+            if (sort)
+
+            {
+
+                e.FormatString = String.Format("{0} : {1}", header, e.Value != null ? ((DateTime)e.Value).ToString("dd/MM/yyyy") : "");
+
+            }
+
+        }
+  
+
 
         #endregion
 
