@@ -53,7 +53,9 @@ namespace Ex_Req_Worklist
 
         private OracleConnection oraCon = null;
 
+#pragma warning disable CS0169 // The field 'ex_req_worklist_host._session_id' is never used
         private double _session_id;
+#pragma warning restore CS0169 // The field 'ex_req_worklist_host._session_id' is never used
 
         long sid = 1;
 
@@ -332,6 +334,7 @@ namespace Ex_Req_Worklist
 
                     dal.MockConnect();
                     oraCon = dal.GetOracleConnection(_ntlsCon);
+                    textBoxCloseRow.Focus();
 
                 }
 
@@ -372,6 +375,7 @@ namespace Ex_Req_Worklist
                         tabHedears[i] = tab.Text;
 
                         i++;
+
 
                     }
 
@@ -431,11 +435,6 @@ namespace Ex_Req_Worklist
                     c_grid.Columns["CreatedOn"].FormatString = "{0:dd/MM/yyyy}";
                 }
 
-                if (c_grid.Columns["ExRequestCreatedOn"] != null)
-                {
-                    c_grid.Columns["ExRequestCreatedOn"].FormatString = "{0:dd/MM/yyyy}";
-                }
-
                 if (c_grid.Columns["PathologMacroTime"] != null)
                 {
                     c_grid.Columns["PathologMacroTime"].FormatString = "{0:dd/MM/yyyy}";
@@ -456,7 +455,6 @@ namespace Ex_Req_Worklist
             }
         }
         private void refreshPage()
-
         {
 
             _ = LoadDataFromDB();
@@ -470,10 +468,6 @@ namespace Ex_Req_Worklist
             c_grid.Rows[0].IsSelected = true;
 
             c_grid.TableElement.ScrollToRow(0);
-
-
-
-
 
         }
         private void buttonRefresh_Click(object sender, EventArgs e)
@@ -601,6 +595,7 @@ namespace Ex_Req_Worklist
 
         private void setListPap()
         {
+#pragma warning disable CS0168 // Variable is declared but never used
             try
             {
                 var ListPap = (from dp in dal.GetAll<EXTRA_PAP_DILUTION>()
@@ -610,7 +605,7 @@ namespace Ex_Req_Worklist
                                    ExRequestCreatedOn = dp.CREATED_ON,
                                    ExReqCreatedBy = dp.NAME,
                                    CreatedOn = dp.RECEIVED_ON,
-                                   SampleName = dp.SAMP_NAME,
+                                   SlideNumber = dp.SAMP_NAME,
                                    ExRequestId = dp.EX_REQ_DATA_ID,
                                    Ex_req_status = dp.EX_REQ_STATUS,
                                    sdgId = dp.SDG_ID
@@ -644,10 +639,12 @@ namespace Ex_Req_Worklist
                 MessageBox.Show("Test pap");
 
             }
+#pragma warning restore CS0168 // Variable is declared but never used
         }
 
         private void setListCellBlock()
         {
+#pragma warning disable CS0168 // Variable is declared but never used
             try
             {
                 var ListCellBlock = (from cb in dal.GetAll<EXTRA_CELL_BLOCK>()
@@ -694,12 +691,14 @@ namespace Ex_Req_Worklist
 
                 MessageBox.Show("Test");
             }
+#pragma warning restore CS0168 // Variable is declared but never used
         }
 
         private void SetListExMaterial()
 
         {
 
+#pragma warning disable CS0168 // Variable is declared but never used
             try
 
             {
@@ -792,6 +791,7 @@ namespace Ex_Req_Worklist
                 MessageBox.Show("SetListExMaterial ");
 
             }
+#pragma warning restore CS0168 // Variable is declared but never used
 
 
 
@@ -854,6 +854,7 @@ namespace Ex_Req_Worklist
 
                 //ואם יש לו רק בקשת אימונו אז צריך להופיע רק באימונוהיסטוכימיה
 
+                #region
                 //var groupbyBlockNumber = ex_s.GroupBy(x => x.BlockNumber);
                 //Debugger.Launch();
                 //foreach (var reqsOnBlock in groupbyBlockNumber)
@@ -883,7 +884,7 @@ namespace Ex_Req_Worklist
                 //    GridImmono.DataSource = listPart_Immono;
                 //    GridHistochemistry.DataSource = listPart_Histochemistry_Others;
                 //}
-
+                #endregion
 
 
                 var groupbyBlockNumber = ex_s.GroupBy(x => x.BlockNumber);
@@ -979,8 +980,17 @@ namespace Ex_Req_Worklist
                 SelectRow();
             }
         }
+
+        private void tabImmono_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void buttonCloseRow_Click(object sender, EventArgs e)
         {
+
+            //If pap - What to do with the new slide?
+            //aaaaaaaaaaaaaaaaaaaaaaaa
             try
             {
                 var result = MessageBox.Show("האם להסיר את הסליידים שסומנו?", "הסרת סליידים", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
@@ -1060,26 +1070,18 @@ namespace Ex_Req_Worklist
 
                     textBoxCloseRow.Text = string.Empty;
 
-
-
                     if (countProcessRows > 0)
-
                     {
-
                         var msg = string.Format("!{0} {1} {2} {3}", "לא ניתן להסיר בקשות בתהליך", countProcessRows, countProcessRows > 1 ? "בקשות לא הוסרו " : "בקשה לא הוסרה ", "מהרשימה ");
 
                         MessageBox.Show(msg, "מסך בקשות נוספות", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                     }
 
                     if (countCloseRows > 0)
-
                     {
-
                         var msg = string.Format("!{0} {1} {2} {3}", "התהליך הושלם", countCloseRows, countCloseRows > 1 ? "בקשות הוסרו " : "בקשה הוסרה ", "מהרשימה ");
 
                         MessageBox.Show(msg, "מסך בקשות נוספות", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                     }
 
                 }
@@ -1127,22 +1129,22 @@ namespace Ex_Req_Worklist
         }
         private void AddReq2List()
         {
-
+            var boxTxt = textBoxCloseRow.Text;
+            textBoxCloseRow.Text = string.Empty;
             TabPage c_tab = this.tabControl1.SelectedTab;
             RadGridView c_grid = c_tab.Controls.OfType<RadGridView>().FirstOrDefault();
 
             var datalist = c_grid.DataSource as List<ExtraRequestRow>;
 
-            var req2Close = datalist.Where(item => (item.SlideNumber != null && item.SlideNumber.Equals(textBoxCloseRow.Text)) ||
+            var req2Close = datalist.Where(item => (item.SlideNumber != null && item.SlideNumber.Equals(boxTxt)) ||
 
-                     (item.SampleName != null && item.SampleName.Equals(textBoxCloseRow.Text)));
+                     (item.SampleName != null && item.SampleName.Equals(boxTxt)));
 
             flag = true;
 
             if (req2Close.Count() < 1)
             {
                 MessageBox.Show("לא ניתן למצוא בקשה עם השם הנתון.");
-                textBoxCloseRow.Text = string.Empty;
                 flag = false;
                 return;
             }
@@ -1169,10 +1171,7 @@ namespace Ex_Req_Worklist
                 index = datalist.FindIndex(a => a.SlideNumber == firstReq.SlideNumber);
 
             c_grid.Rows[index].IsSelected = true;
-
-            textBoxCloseRow.Text = string.Empty;
-
-
+            textBoxCloseRow.Focus();    
 
             reqList2Close.Add(index);
 
