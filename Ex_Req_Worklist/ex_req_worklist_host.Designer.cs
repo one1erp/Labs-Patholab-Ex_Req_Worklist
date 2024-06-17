@@ -35,14 +35,8 @@ namespace Ex_Req_Worklist
 
         private void InitializeComponent()
         {
-
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn1 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn2 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
-
-            Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn111 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
-            Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn222 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
-
-
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn3 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn4 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn5 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
@@ -51,6 +45,7 @@ namespace Ex_Req_Worklist
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn8 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn9 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn10 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
+            Telerik.WinControls.UI.TableViewDefinition tableViewDefinition1 = new Telerik.WinControls.UI.TableViewDefinition();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn11 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn12 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn13 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
@@ -61,6 +56,7 @@ namespace Ex_Req_Worklist
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn18 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn19 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn20 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
+            Telerik.WinControls.UI.TableViewDefinition tableViewDefinition2 = new Telerik.WinControls.UI.TableViewDefinition();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn21 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn22 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn23 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
@@ -71,11 +67,16 @@ namespace Ex_Req_Worklist
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn28 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn29 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn30 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
+            Telerik.WinControls.UI.TableViewDefinition tableViewDefinition3 = new Telerik.WinControls.UI.TableViewDefinition();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn31 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn32 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn33 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn34 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
+            Telerik.WinControls.UI.TableViewDefinition tableViewDefinition4 = new Telerik.WinControls.UI.TableViewDefinition();
             Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn35 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
+            Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn36 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
+            Telerik.WinControls.UI.GridViewTextBoxColumn gridViewTextBoxColumn37 = new Telerik.WinControls.UI.GridViewTextBoxColumn();
+            Telerik.WinControls.UI.TableViewDefinition tableViewDefinition5 = new Telerik.WinControls.UI.TableViewDefinition();
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabImmono = new System.Windows.Forms.TabPage();
@@ -174,12 +175,12 @@ namespace Ex_Req_Worklist
             this.GridImmono.MasterTemplate.AllowAddNewRow = false;
             this.GridImmono.MasterTemplate.AllowEditRow = false;
             this.GridImmono.MasterTemplate.AutoSizeColumnsMode = Telerik.WinControls.UI.GridViewAutoSizeColumnsMode.Fill;
-            gridViewTextBoxColumn111.EnableExpressionEditor = true;
-            gridViewTextBoxColumn111.FieldName = "SdgPatholabNumber";
-            gridViewTextBoxColumn111.HeaderText = "מספר מקרה";
-            gridViewTextBoxColumn111.Name = "SdgPatholabNumber";
-            gridViewTextBoxColumn111.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            gridViewTextBoxColumn111.Width = 195;
+            gridViewTextBoxColumn1.EnableExpressionEditor = true;
+            gridViewTextBoxColumn1.FieldName = "SdgPatholabNumber";
+            gridViewTextBoxColumn1.HeaderText = "מספר מקרה";
+            gridViewTextBoxColumn1.Name = "SdgPatholabNumber";
+            gridViewTextBoxColumn1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            gridViewTextBoxColumn1.Width = 195;
             gridViewTextBoxColumn2.FieldName = "CreatedOn";
             gridViewTextBoxColumn2.HeaderText = "תאריך קבלת החומר";
             gridViewTextBoxColumn2.Name = "CreatedOn";
@@ -190,11 +191,6 @@ namespace Ex_Req_Worklist
             gridViewTextBoxColumn3.Name = "SlideNumber";
             gridViewTextBoxColumn3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             gridViewTextBoxColumn3.Width = 214;
-            gridViewTextBoxColumn222.FieldName = "SlideNumber";
-            gridViewTextBoxColumn222.HeaderText = "מספר סלייד";
-            gridViewTextBoxColumn222.Name = "SlideNumber";
-            gridViewTextBoxColumn222.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            gridViewTextBoxColumn222.Width = 214;
             gridViewTextBoxColumn4.FieldName = "ExRequestDetails";
             gridViewTextBoxColumn4.HeaderText = "שם הצביעה";
             gridViewTextBoxColumn4.Name = "ExRequestDetails";
@@ -231,9 +227,9 @@ namespace Ex_Req_Worklist
             gridViewTextBoxColumn10.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             gridViewTextBoxColumn10.Width = 64;
             this.GridImmono.MasterTemplate.Columns.AddRange(new Telerik.WinControls.UI.GridViewDataColumn[] {
-            gridViewTextBoxColumn111,
+            gridViewTextBoxColumn1,
             gridViewTextBoxColumn2,
-            gridViewTextBoxColumn222,
+            gridViewTextBoxColumn3,
             gridViewTextBoxColumn4,
             gridViewTextBoxColumn5,
             gridViewTextBoxColumn6,
@@ -245,7 +241,8 @@ namespace Ex_Req_Worklist
             this.GridImmono.MasterTemplate.EnableFiltering = true;
             this.GridImmono.MasterTemplate.ShowFilteringRow = false;
             this.GridImmono.MasterTemplate.ShowHeaderCellButtons = true;
-
+            this.GridImmono.MasterTemplate.ViewDefinition = tableViewDefinition1;
+            this.GridImmono.Name = "GridImmono";
             // 
             // 
             // 
@@ -350,6 +347,7 @@ namespace Ex_Req_Worklist
             this.GridHistochemistry.MasterTemplate.EnableFiltering = true;
             this.GridHistochemistry.MasterTemplate.ShowFilteringRow = false;
             this.GridHistochemistry.MasterTemplate.ShowHeaderCellButtons = true;
+            this.GridHistochemistry.MasterTemplate.ViewDefinition = tableViewDefinition2;
             this.GridHistochemistry.Name = "radGridView2";
             // 
             // 
@@ -456,6 +454,7 @@ namespace Ex_Req_Worklist
             this.GridExMaterial.MasterTemplate.EnableFiltering = true;
             this.GridExMaterial.MasterTemplate.ShowFilteringRow = false;
             this.GridExMaterial.MasterTemplate.ShowHeaderCellButtons = true;
+            this.GridExMaterial.MasterTemplate.ViewDefinition = tableViewDefinition3;
             this.GridExMaterial.Name = "radGridView4";
             // 
             // 
@@ -497,36 +496,37 @@ namespace Ex_Req_Worklist
             this.GridCellBlock.MasterTemplate.AllowAddNewRow = false;
             this.GridCellBlock.MasterTemplate.AllowEditRow = false;
             this.GridCellBlock.MasterTemplate.AutoSizeColumnsMode = Telerik.WinControls.UI.GridViewAutoSizeColumnsMode.Fill;
-            gridViewTextBoxColumn1.EnableExpressionEditor = true;
-            gridViewTextBoxColumn1.FieldName = "SdgPatholabNumber";
-            gridViewTextBoxColumn1.HeaderText = "מספר מקרה";
-            gridViewTextBoxColumn1.Name = "SdgPatholabNumber";
-            gridViewTextBoxColumn1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            gridViewTextBoxColumn1.Width = 195;
-            gridViewTextBoxColumn31.FieldName = "AliquotPatholabName";
-            gridViewTextBoxColumn31.HeaderText = "מספר בלוק";
-            gridViewTextBoxColumn31.Name = "AliquotPatholabName";
+            gridViewTextBoxColumn31.EnableExpressionEditor = true;
+            gridViewTextBoxColumn31.FieldName = "SdgPatholabNumber";
+            gridViewTextBoxColumn31.HeaderText = "מספר מקרה";
+            gridViewTextBoxColumn31.Name = "SdgPatholabNumber";
             gridViewTextBoxColumn31.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            gridViewTextBoxColumn31.Width = 182;
-            gridViewTextBoxColumn32.FieldName = "PathologMacroTime";
-            gridViewTextBoxColumn32.HeaderText = "תאריך מאקרו";
-            gridViewTextBoxColumn32.Name = "PathologMacroTime";
+            gridViewTextBoxColumn31.Width = 195;
+            gridViewTextBoxColumn32.FieldName = "AliquotPatholabName";
+            gridViewTextBoxColumn32.HeaderText = "מספר בלוק";
+            gridViewTextBoxColumn32.Name = "AliquotPatholabName";
             gridViewTextBoxColumn32.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            gridViewTextBoxColumn32.Width = 300;
-            gridViewTextBoxColumn33.FieldName = "CreatedOn";
-            gridViewTextBoxColumn33.HeaderText = "תאריך קבלת חומר";
-            gridViewTextBoxColumn33.Name = "CreatedOn";
+            gridViewTextBoxColumn32.Width = 182;
+            gridViewTextBoxColumn33.FieldName = "PathologMacroTime";
+            gridViewTextBoxColumn33.HeaderText = "תאריך מאקרו";
+            gridViewTextBoxColumn33.Name = "PathologMacroTime";
             gridViewTextBoxColumn33.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            gridViewTextBoxColumn33.Width = 592;
+            gridViewTextBoxColumn33.Width = 300;
+            gridViewTextBoxColumn34.FieldName = "CreatedOn";
+            gridViewTextBoxColumn34.HeaderText = "תאריך קבלת חומר";
+            gridViewTextBoxColumn34.Name = "CreatedOn";
+            gridViewTextBoxColumn34.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            gridViewTextBoxColumn34.Width = 592;
             this.GridCellBlock.MasterTemplate.Columns.AddRange(new Telerik.WinControls.UI.GridViewDataColumn[] {
-            gridViewTextBoxColumn1,
             gridViewTextBoxColumn31,
             gridViewTextBoxColumn32,
-            gridViewTextBoxColumn33});
+            gridViewTextBoxColumn33,
+            gridViewTextBoxColumn34});
             this.GridCellBlock.MasterTemplate.EnableAlternatingRowColor = true;
             this.GridCellBlock.MasterTemplate.EnableFiltering = true;
             this.GridCellBlock.MasterTemplate.ShowFilteringRow = false;
             this.GridCellBlock.MasterTemplate.ShowHeaderCellButtons = true;
+            this.GridCellBlock.MasterTemplate.ViewDefinition = tableViewDefinition4;
             this.GridCellBlock.Name = "radGridView4";
             // 
             // 
@@ -565,26 +565,32 @@ namespace Ex_Req_Worklist
             this.GridPap.MasterTemplate.AllowAddNewRow = false;
             this.GridPap.MasterTemplate.AllowEditRow = false;
             this.GridPap.MasterTemplate.AutoSizeColumnsMode = Telerik.WinControls.UI.GridViewAutoSizeColumnsMode.Fill;
-            gridViewTextBoxColumn34.FieldName = "ExReqCreatedBy";
-            gridViewTextBoxColumn34.HeaderText = "פתולוג מזמין";
-            gridViewTextBoxColumn34.Name = "ExReqCreatedBy";
-            gridViewTextBoxColumn34.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            gridViewTextBoxColumn34.Width = 134;
-            gridViewTextBoxColumn35.FieldName = "ExRequestCreatedOn";
-            gridViewTextBoxColumn35.HeaderText = "תאריך פתיחת בקשה";
-            gridViewTextBoxColumn35.Name = "ExRequestCreatedOn";
+            gridViewTextBoxColumn35.FieldName = "SlideNumber";
+            gridViewTextBoxColumn35.HeaderText = "מספר סלייד";
+            gridViewTextBoxColumn35.Name = "SlideNumber";
             gridViewTextBoxColumn35.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            gridViewTextBoxColumn35.Width = 135;
+            gridViewTextBoxColumn35.Width = 214;
+            gridViewTextBoxColumn36.FieldName = "ExReqCreatedBy";
+            gridViewTextBoxColumn36.HeaderText = "פתולוג מזמין";
+            gridViewTextBoxColumn36.Name = "ExReqCreatedBy";
+            gridViewTextBoxColumn36.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            gridViewTextBoxColumn36.Width = 134;
+            gridViewTextBoxColumn37.FieldName = "ExRequestCreatedOn";
+            gridViewTextBoxColumn37.HeaderText = "תאריך פתיחת בקשה";
+            gridViewTextBoxColumn37.Name = "ExRequestCreatedOn";
+            gridViewTextBoxColumn37.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            gridViewTextBoxColumn37.Width = 135;
             this.GridPap.MasterTemplate.Columns.AddRange(new Telerik.WinControls.UI.GridViewDataColumn[] {
-            gridViewTextBoxColumn1,
-            gridViewTextBoxColumn3,
-            gridViewTextBoxColumn33,
+            gridViewTextBoxColumn31,
+            gridViewTextBoxColumn35,
             gridViewTextBoxColumn34,
-            gridViewTextBoxColumn35});
+            gridViewTextBoxColumn36,
+            gridViewTextBoxColumn37});
             this.GridPap.MasterTemplate.EnableAlternatingRowColor = true;
             this.GridPap.MasterTemplate.EnableFiltering = true;
             this.GridPap.MasterTemplate.ShowFilteringRow = false;
             this.GridPap.MasterTemplate.ShowHeaderCellButtons = true;
+            this.GridPap.MasterTemplate.ViewDefinition = tableViewDefinition5;
             this.GridPap.Name = "radGridView4";
             // 
             // 

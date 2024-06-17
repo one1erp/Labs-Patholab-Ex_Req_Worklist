@@ -1162,7 +1162,7 @@ namespace Ex_Req_Worklist
 
             int index = c_grid.CurrentRow.Index;
 
-            if (tabControl1.TabPages.IndexOfKey(c_tab.Name) == 2 || tabControl1.TabPages.IndexOfKey(c_tab.Name) == 4)
+            if (tabControl1.TabPages.IndexOfKey(c_tab.Name) == 2)
 
                 index = datalist.FindIndex(a => a.SampleName == firstReq.SampleName);
 
