@@ -1,14 +1,11 @@
 ﻿using LSExtensionWindowLib;
 using LSSERVICEPROVIDERLib;
 using Oracle.ManagedDataAccess.Client;
-//using Oracle.ManagedDataAccess.Client;
-
 using Patholab_Common;
 using Patholab_DAL_V1;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -16,13 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Telerik.WinControls.UI;
 
-
-//using Telerik.WinControls.Data;
-
-
-
 namespace Ex_Req_Worklist
-
 {
 
 
@@ -407,13 +398,15 @@ namespace Ex_Req_Worklist
             try
             {
                 Task task1 = Task.Run(() => { SetListImmonoHisOthers(); });
-                Task task2 = Task.Run(() => { SetListExMaterial(); });
+                Task task2 = Task.Run(() => { 
+                    SetListExMaterial();
+                    setListCellBlock();
+                    setListPap();
+                });
 
 
                 await Task.WhenAll(task1, task2);
 
-                setListCellBlock();
-                setListPap();
                 UpdateTabPages();
             }
             catch (Exception ex)
@@ -595,7 +588,6 @@ namespace Ex_Req_Worklist
 
         private void setListPap()
         {
-#pragma warning disable CS0168 // Variable is declared but never used
             try
             {
                 var ListPap = (from dp in dal.GetAll<EXTRA_PAP_DILUTION>()
@@ -636,15 +628,13 @@ namespace Ex_Req_Worklist
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Test pap");
-
+                MessageBox.Show($"אנא פנה לתמיכה");
+                Logger.WriteLogFile($"setListPap : {ex.Message}");
             }
-#pragma warning restore CS0168 // Variable is declared but never used
         }
 
         private void setListCellBlock()
         {
-#pragma warning disable CS0168 // Variable is declared but never used
             try
             {
                 var ListCellBlock = (from cb in dal.GetAll<EXTRA_CELL_BLOCK>()
@@ -688,19 +678,14 @@ namespace Ex_Req_Worklist
             }
             catch (Exception ex)
             {
-
-                MessageBox.Show("Test");
+                MessageBox.Show($"אנא פנה לתמיכה");
+                Logger.WriteLogFile($"setListCellBlock : {ex.Message}");
             }
-#pragma warning restore CS0168 // Variable is declared but never used
         }
 
         private void SetListExMaterial()
-
         {
-
-#pragma warning disable CS0168 // Variable is declared but never used
             try
-
             {
                 //טעינה מהDB
                 var ListExMaterial = (from em in dal.GetAll<EXTRA_MATERIAL>()
@@ -756,14 +741,7 @@ namespace Ex_Req_Worklist
                 var listExm = ListExMaterial.OrderBy(x => x.CreatedOn.HasValue ? x.CreatedOn.Value : DateTime.Now).ThenBy(x => x.SdgPatholabNumber).ThenBy(x => x.Priority_num).ToList();
 
 
-
-
-
-
-
                 listPart_ExMaterial.AddRange(listExm);
-
-
 
 
 
@@ -785,15 +763,10 @@ namespace Ex_Req_Worklist
             }
 
             catch (Exception ex)
-
             {
-
-                MessageBox.Show("SetListExMaterial ");
-
+                MessageBox.Show($"אנא פנה לתמיכה");
+                Logger.WriteLogFile($"SetListExMaterial : {ex.Message}");
             }
-#pragma warning restore CS0168 // Variable is declared but never used
-
-
 
         }
 
@@ -801,140 +774,50 @@ namespace Ex_Req_Worklist
         {
             try
             {
+                Logger.WriteInfoToLog($"BEFORE SetListImmonoHisOthers: {DateTime.Now.ToString()}");
                 string query = "select * from lims.EXTRA_SLIDES";
-                List<ExtraRequestRow> ex_s = new List<ExtraRequestRow>();
+                List<ExtraRequestRow> extraRequestRows_list = new List<ExtraRequestRow>();
 
+                // Fetch data from the database
                 using (OracleCommand cmd = new OracleCommand(query, oraCon))
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
+                            // Create a new ExtraRequestRow object and populate its properties
+                            var extraRequest = new ExtraRequestRow();
+                            extraRequest.sdgId = reader.GetInt32(reader.GetOrdinal("sdg_id"));
+                            extraRequest.ExRequestId = reader.GetInt32(reader.GetOrdinal("REQ_id"));
+                            extraRequest.CreatedOn = reader.GetDateTime(reader.GetOrdinal("containerReceivedOn"));
+                            extraRequest.SdgPatholabNumber = reader.GetString(reader.GetOrdinal("sdg_patholab_number"));
+                            extraRequest.Priority_num = reader.GetInt32(reader.GetOrdinal("priority_num"));
+                            extraRequest._Priority = reader.GetString(reader.GetOrdinal("priority"));
+                            extraRequest.SlideNumber = reader.IsDBNull(reader.GetOrdinal("slide_number")) ? null : reader.GetString(reader.GetOrdinal("slide_number"));
+                            extraRequest.PathologName = reader.IsDBNull(reader.GetOrdinal("patholog_name")) ? null : reader.GetString(reader.GetOrdinal("patholog_name"));
+                            extraRequest.ExRequestDetails = reader.IsDBNull(reader.GetOrdinal("request_details")) ? null : reader.GetString(reader.GetOrdinal("request_details"));
+                            extraRequest.ExRequestStatus = reader.IsDBNull(reader.GetOrdinal("request_status")) ? null : reader.GetString(reader.GetOrdinal("request_status"));
+                            extraRequest.Remarks = reader.IsDBNull(reader.GetOrdinal("request_remarks")) ? null : reader.GetString(reader.GetOrdinal("request_remarks"));
+                            extraRequest.CuttingLaborant = reader.IsDBNull(reader.GetOrdinal("cutting_laborant")) ? null : reader.GetString(reader.GetOrdinal("cutting_laborant"));
+                            extraRequest.RequestType = reader.IsDBNull(reader.GetOrdinal("request_type")) ? null : reader.GetString(reader.GetOrdinal("request_type"));
+                            extraRequest.ExRequestCreatedOn = reader.GetDateTime(reader.GetOrdinal("request_created_on"));
+                            extraRequest.Has_I_color_same_date = reader.IsDBNull(reader.GetOrdinal("Has_I_color_same_date")) ? false : true;
 
-                            extraRequest_slides = new ExtraRequestRow();
-                            extraRequest_slides.sdgId = reader.GetInt32(reader.GetOrdinal("sdg_id"));
-                            extraRequest_slides.CreatedOn = reader.GetDateTime(reader.GetOrdinal("containerReceivedOn"));
-                            extraRequest_slides.SdgPatholabNumber = reader.GetString(reader.GetOrdinal("sdg_patholab_number"));
-                            extraRequest_slides.SamplePatholabName = reader.IsDBNull(reader.GetOrdinal("sample_patholab_number")) ? null : reader.GetString(reader.GetOrdinal("sample_patholab_number"));
-                            extraRequest_slides.AliquotPatholabName = reader.IsDBNull(reader.GetOrdinal("aliquot_patholab_number")) ? null : reader.GetString(reader.GetOrdinal("aliquot_patholab_number"));
-                            extraRequest_slides.Priority_num = reader.GetInt32(reader.GetOrdinal("priority_num"));
-                            extraRequest_slides._Priority = reader.GetString(reader.GetOrdinal("priority"));
-                            extraRequest_slides.BlockNumber = reader.IsDBNull(reader.GetOrdinal("block_number")) ? null : reader.GetString(reader.GetOrdinal("block_number"));
-                            extraRequest_slides.SlideNumber = reader.IsDBNull(reader.GetOrdinal("slide_number")) ? null : reader.GetString(reader.GetOrdinal("slide_number"));
-                            extraRequest_slides.PathologName = reader.IsDBNull(reader.GetOrdinal("patholog_name")) ? null : reader.GetString(reader.GetOrdinal("patholog_name"));
-                            extraRequest_slides.PathologMacro = reader.IsDBNull(reader.GetOrdinal("patholog_macro")) ? null : reader.GetString(reader.GetOrdinal("patholog_macro"));
-                            extraRequest_slides.PathologMacroTime = reader.IsDBNull(reader.GetOrdinal("patholog_macro_time")) ? null : (DateTime?)reader.GetDateTime(reader.GetOrdinal("patholog_macro_time"));
-                            extraRequest_slides.ExRequestCreatedOn = reader.GetDateTime(reader.GetOrdinal("request_created_on"));
-                            extraRequest_slides.ExRequestName = reader.IsDBNull(reader.GetOrdinal("request_name")) ? null : reader.GetString(reader.GetOrdinal("request_name"));
-                            extraRequest_slides.ExRequestEntityType = reader.IsDBNull(reader.GetOrdinal("request_Entity_Type")) ? null : reader.GetString(reader.GetOrdinal("request_Entity_Type"));
-                            extraRequest_slides.ExRequestDetails = reader.IsDBNull(reader.GetOrdinal("request_details")) ? null : reader.GetString(reader.GetOrdinal("request_details"));
-                            extraRequest_slides.ExRequestStatus = reader.IsDBNull(reader.GetOrdinal("request_status")) ? null : reader.GetString(reader.GetOrdinal("request_status"));
-                            extraRequest_slides.RequestType = reader.IsDBNull(reader.GetOrdinal("request_type")) ? null : reader.GetString(reader.GetOrdinal("request_type"));
-                            extraRequest_slides.Remarks = reader.IsDBNull(reader.GetOrdinal("request_remarks")) ? null : reader.GetString(reader.GetOrdinal("request_remarks"));
-                            extraRequest_slides.CuttingLaborant = reader.IsDBNull(reader.GetOrdinal("cutting_laborant")) ? null : reader.GetString(reader.GetOrdinal("cutting_laborant"));
-                            extraRequest_slides.ExRequestId = reader.GetInt32(reader.GetOrdinal("req_id"));
-
-                            ex_s.Add(extraRequest_slides);
-                        }
-
-
-                    }
-                }
-
-                ex_s.OrderBy(x => x.CreatedOn.HasValue ? x.CreatedOn.Value : DateTime.Now).ThenBy(x => x.SdgPatholabNumber).ThenBy(x => x.Priority_num).ToList();
-
-
-
-
-                //נתנאל ביקש
-
-                //אם לבלוק יש גם בקשת אימונו וגם היסטוכימיה אז שיופיע רק באימונוהיסטוכימיה
-
-                //ואם יש לו רק בקשת היסטוכימיה אז צריך להופיע רק בהיסטוכימיה
-
-                //ואם יש לו רק בקשת אימונו אז צריך להופיע רק באימונוהיסטוכימיה
-
-                #region
-                //var groupbyBlockNumber = ex_s.GroupBy(x => x.BlockNumber);
-                //Debugger.Launch();
-                //foreach (var reqsOnBlock in groupbyBlockNumber)
-                //{
-                //    if (reqsOnBlock.Any(x => x.RequestType == "I"))
-                //    {
-                //        listPart_Immono.AddRange(reqsOnBlock);
-                //    }
-                //    else
-                //    {
-                //        if (reqsOnBlock.Any(x => x.RequestType == "O" || x.RequestType == "H"))
-                //            listPart_Histochemistry_Others.AddRange(reqsOnBlock);
-                //    }
-                //}
-                //if (GridImmono.InvokeRequired)
-                //{
-                //    //If we're not on the UI thread, invoke this method on the UI thread
-                //    GridImmono.Invoke((MethodInvoker)delegate
-                //    {
-                //        GridImmono.DataSource = listPart_Immono;
-                //        GridHistochemistry.DataSource = listPart_Histochemistry_Others;
-                //    });
-                //}
-                //else
-                //{
-                //    // If we are already on the UI thread, directly set the DataSource
-                //    GridImmono.DataSource = listPart_Immono;
-                //    GridHistochemistry.DataSource = listPart_Histochemistry_Others;
-                //}
-                #endregion
-
-
-                var groupbyBlockNumber = ex_s.GroupBy(x => x.BlockNumber);
-                List<RequestInfo> xxx = new List<RequestInfo>();
-                query = "select BLOCKNUMBER, EXREQUESTCREATEDON from lims.EXTRA_SLIDES_STATUS_P";
-
-                using (OracleCommand cmd = new OracleCommand(query, oraCon))
-                {
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            xxx.Add(new RequestInfo
-                            {
-                                BLOCKNUMBER = !reader.IsDBNull(reader.GetOrdinal("BLOCKNUMBER")) ? reader.GetString(reader.GetOrdinal("BLOCKNUMBER")) : string.Empty,
-                                EXREQUESTCREATEDON = !reader.IsDBNull(reader.GetOrdinal("EXREQUESTCREATEDON")) ? reader.GetString(reader.GetOrdinal("EXREQUESTCREATEDON")) : string.Empty,
-                            });
-                        }
-                    }
-
-                }
-                foreach (var blockGrp in groupbyBlockNumber)
-                {
-                    var groupbyCreatedOn = blockGrp.GroupBy(x => x.CreatedOn);
-
-                    foreach (var CreatedOnGrp in groupbyCreatedOn)
-                    {
-                        var NestedGrpbyType = CreatedOnGrp.GroupBy(x => x.RequestType);
-                        var Has_status_p = xxx.Where(x => x.BLOCKNUMBER == blockGrp.Key && CreatedOnGrp.Key.Value.ToString("dd/MM/yyyy").Equals(x.EXREQUESTCREATEDON)).Count();
-                        var HasImmuno = NestedGrpbyType.Where(t => t.Key == "I").FirstOrDefault();
-
-                        if (HasImmuno != null || Has_status_p > 0)
-                        {
-                            listPart_Immono.AddRange(CreatedOnGrp.ToList());
-                        }
-                        else
-                        {
-                            listPart_Histochemistry_Others.AddRange(CreatedOnGrp.ToList());
+                            extraRequestRows_list.Add(extraRequest);
                         }
                     }
                 }
 
+                // Sort the list based on specific criteria
+                extraRequestRows_list = extraRequestRows_list.OrderBy(x => x.CreatedOn ?? DateTime.Now).ThenBy(x => x.SdgPatholabNumber).ThenBy(x => x.Priority_num).ToList();
+
+                listPart_Immono = extraRequestRows_list.Where(x => x.RequestType == "I" || x.Has_I_color_same_date).ToList();
+                listPart_Histochemistry_Others = extraRequestRows_list.Where(x => x.RequestType != "I" && !x.Has_I_color_same_date).ToList();
 
 
-
-
+                // Update UI with the processed lists
                 if (GridImmono.InvokeRequired)
                 {
-                    // If we're not on the UI thread, invoke this method on the UI thread
                     GridImmono.Invoke((MethodInvoker)delegate
                     {
                         GridImmono.DataSource = listPart_Immono;
@@ -943,27 +826,22 @@ namespace Ex_Req_Worklist
                 }
                 else
                 {
-                    // If we are already on the UI thread, directly set the DataSource
                     GridImmono.DataSource = listPart_Immono;
                     GridHistochemistry.DataSource = listPart_Histochemistry_Others;
                 }
 
+                // Update counters for the number of requests in each list
                 countArr[0] = listPart_Immono.Count;
-
                 countArr[1] = listPart_Histochemistry_Others.Count;
-
-
-
             }
-
             catch (Exception ex)
-
             {
-
-                MessageBox.Show($"SetListImmonoHisOthers : {ex.Message}");
-
+                // Display error message if an exception occurs
+                MessageBox.Show($"אנא פנה לתמיכה");
+                Logger.WriteLogFile(ex.Message);
             }
 
+            Logger.WriteInfoToLog($"AFTER SetListImmonoHisOthers: {DateTime.Now.ToString()}");
         }
 
         #endregion
@@ -1171,12 +1049,12 @@ namespace Ex_Req_Worklist
                 index = datalist.FindIndex(a => a.SlideNumber == firstReq.SlideNumber);
 
             c_grid.Rows[index].IsSelected = true;
-            textBoxCloseRow.Focus();    
+            textBoxCloseRow.Focus();
 
             reqList2Close.Add(index);
 
 
-        }      
+        }
         public int GetFirstVisibleRowIndex()
         {
 
@@ -1197,11 +1075,5 @@ namespace Ex_Req_Worklist
         }
         #endregion
     }
-    public class RequestInfo
-    {
-        public string BLOCKNUMBER { get; set; }
-        public string EXREQUESTCREATEDON { get; set; }
-    }
-
 
 }

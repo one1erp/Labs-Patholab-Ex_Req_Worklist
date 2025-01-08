@@ -92,7 +92,7 @@ namespace Ex_Req_Worklist
         }
 
         public string RequestType { get; set; }
-
+        public bool Has_I_color_same_date { get; internal set; }
 
         private string p;
 
